@@ -1,0 +1,7 @@
+^foo\.Rproj$
+^\.Rproj\.user$
+^foo\.Rcheck$
+^foo.*\.tar\.gz$
+^foo.*\.tgz$
+^LICENSE\.md$
+^README\.Rmd$

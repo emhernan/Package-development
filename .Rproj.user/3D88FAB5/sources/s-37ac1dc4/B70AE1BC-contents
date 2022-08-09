@@ -1,0 +1,4 @@
+test_that("Shannon function works", {
+  expect_equal(my_shannon(1), 0)
+})
+

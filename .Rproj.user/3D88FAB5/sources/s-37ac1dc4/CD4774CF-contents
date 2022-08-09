@@ -1,0 +1,146 @@
+# Check if you have the developer tools installed:
+  
+# devtools::has_devel()
+
+# To create your package, open a new session of RStudio, not inside an Rproject.
+
+# Select a location outside your repository for this course.
+
+# usethis::create_package("../foo")
+
+# Once you are already inside the folder and create the Rproject file.
+
+# 1. Check the folder structure that was created by usethis
+
+# 2. It has files NAMESPACE, DESCRIPTION, an empty R subfolder where the functions will be created.
+
+# 3. It also has a .gitignore file (it’s ready to be a git repository)
+
+# 4. and a .Rbuildignore file where you should list files that won’t be used by the package.
+# For example, if you have a script inside the folder for creating the folder, it should be listed there.
+
+# DESCRIPTION
+
+# Edit DESCRIPTION by hand with a description and your name 
+# In the License field, thre’s a suggestion to setup a license. 
+# Execute usethis::use_mit_license() in the console. It will edit DESCRIPTION and create a LICENSE file
+
+usethis::use_mit_license()
+
+# Let’s add a function
+# We won’t be creating a complicated function. We can use our Shannon diversity function from previous sessions.
+# Copy the code for the function in a new file inside /R: R/my_shannon.R
+# You can create this file by hand or use: usethis::use_r("my_shannon")
+# It will open an empty file. Copy the Shannon diversity function from this chunk:
+
+usethis::use_r("my_shannon")
+
+'''
+my_shannon <- function(x) {
+  x <- x[x > 0]
+  sum_all <- sum(x)
+  pi <- x/sum_all
+  -sum(pi*log(pi))
+}
+
+'''
+
+# Checking the package
+# We will be checking if the package can load without installing it:
+  
+devtools::load_all() 
+## It is only to check if the package can be load, the debug of particualr functions you can check it 
+## by hand. 
+
+# You can already execute the function my_shannon() in the console 🎉
+
+my_shannon(1)
+my_shannon(c(1, 2, 3))
+
+# Now we need to create the documentation and some tests.
+# Documenting functions
+# Let’s add an roxygen2 header to the function.
+
+# Open the file, put the cursor at the beginning of the file
+# Go to the menu Code>Insert roxygen skeleton
+# It will add some special comments with a single quote #'
+# Replace Title by Shannon diversity
+# You can add a description a couple lines after
+# It added x as a parameter. It will add automatically all the parameters
+# of your function. Edit that line so it looks like this
+
+#' @param x A vector with values of abundance in the community
+
+# The field @return allows you to describe what type of return you will get. Edit it so it looks like this:
+
+#' @return A numeric vector of length 1 with the value of the Shannon diversity 
+
+# The field @export tells R to export the function, to make it available in the workspace.
+# The field @examples allows you to add some example of how the function would be used:
+
+#' @examples 
+#' com <- c(1, 2, 3)
+#' my_shannon(com)
+
+# Examples are optional and not recommended if they take too long to run. They will be executed later by the tests of the packages, so they have to run.
+# After you finished editing the roxygen2 header, we can create the documentation with:
+
+devtools::document()
+
+# Check inside the /man subfolder. We have a new file my_shannon.Rd with the correct documentation format.
+# To see how it parses, you can ask for the help of the function:
+
+?my_shannon
+
+# Run CRAN checks
+# devtools has a function that emulates the checks run by CRAN when you submit a package.
+
+devtools::check()
+
+# It will run the examples, the tests, and the vignettes.
+# It will also check for the size of the package, the time that examples take to run, and more.
+# In more complex examples, devtools::check() will return errors, warnings and notes. All of them need to be adressed, especially the errors and warnings.
+# Some of these will not allow you to load or install the package.
+
+# Testing the functions
+# It’s best to add tests for every function in the package. The percentage of code that is covered by tests is commonly called the coverage.
+# Tests are saved in the /tests subfolder.
+
+# Executing:
+usethis::use_test("my_shannon")
+
+# Will add a tests/test-my_shannon.R file
+# Testing with testthat package has many complex options. We can check a particular value
+# Add these options between the brackets
+# You can check the package again, it will run the tests now.
+
+'''
+expect_equal(my_shannon(1), 0)
+expect_type(my_shannon(c(1, 2, 3)), "double")
+expect_snapshot_error(my_shannon("a"))
+'''
+
+devtools::check()
+
+# Add a README
+
+usethis::use_readme_rmd()
+
+# The .Rmd file allows you to add figures and code easily. 
+# To generate a README.md, knit the Rmd using the Knit button or ctrl+shift+K.
+# The first time it will probably return an error because the Rmd calls for library(foo).
+# We have to install the package.
+
+# Install your own package locally
+
+devtools::install()
+
+# Now you can call the library and and knit the README.Rmd file.
+library(foo)
+
+# Put the package online so anyone can install it!
+
+# This package should be a git repository.
+# The command
+
+usethis::use_git()
